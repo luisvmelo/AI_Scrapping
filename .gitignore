@@ -1,0 +1,16 @@
+# --- Python artefacts ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+# --- Virtualenv ---
+venv/
+ENV/
+.env/
+.Python
+# --- IDE / Editor ---
+.vscode/
+.idea/
+# --- OS ---
+.DS_Store
+Thumbs.db

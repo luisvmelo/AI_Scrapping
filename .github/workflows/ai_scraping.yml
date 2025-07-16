@@ -1,0 +1,167 @@
+name: AI Tools Scraping
+
+on:
+  schedule:
+    # Executa todos os dias às 06:00 UTC (03:00 Brasília)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    # Permite execução manual
+    inputs:
+      scrapers:
+        description: 'Scrapers to run (comma-separated: aitools_directory,theresanaiforthat,futurepedia,phygital_library)'
+        required: false
+        default: 'aitools_directory,theresanaiforthat,futurepedia,phygital_library'
+      calculate_synergies:
+        description: 'Calculate synergies after scraping'
+        required: false
+        default: 'true'
+        type: boolean
+
+jobs:
+  scrape-and-sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Create .env file
+      run: |
+        echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" > .env
+        echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
+        
+    - name: Run AI Tools Directory Scraper
+      if: contains(github.event.inputs.scrapers || 'aitools_directory,theresanaiforthat,futurepedia', 'aitools_directory')
+      run: |
+        echo "🤖 Executando scraper do AI Tools Directory..."
+        python -c "
+        from scrapers.aitools_directory import scrape_aitools_directory
+        from merge.merge_and_upsert import merge_tools_to_supabase
+        print('Iniciando scraping do AI Tools Directory...')
+        tools = scrape_aitools_directory()
+        print(f'Scraped {len(tools)} tools')
+        if tools:
+            stats = merge_tools_to_supabase(tools)
+            print(f'Merge stats: {stats}')
+        else:
+            print('Nenhuma ferramenta encontrada')
+        "
+        
+    - name: Run There's An AI For That Scraper
+      if: contains(github.event.inputs.scrapers || 'aitools_directory,theresanaiforthat,futurepedia', 'theresanaiforthat')
+      run: |
+        echo "🤖 Executando scraper do There's An AI For That..."
+        python -c "
+        from scrapers.theresanaiforthat import scrape_theresanaiforthat
+        from merge.merge_and_upsert import merge_tools_to_supabase
+        print('Iniciando scraping do There\'s An AI For That...')
+        tools = scrape_theresanaiforthat()
+        print(f'Scraped {len(tools)} tools')
+        if tools:
+            stats = merge_tools_to_supabase(tools)
+            print(f'Merge stats: {stats}')
+        else:
+            print('Nenhuma ferramenta encontrada')
+        "
+        
+    - name: Run Futurepedia Scraper
+      if: contains(github.event.inputs.scrapers || 'aitools_directory,theresanaiforthat,futurepedia', 'futurepedia')
+      run: |
+        echo "🤖 Executando scraper do Futurepedia..."
+        python -c "
+        from scrapers.futurepedia import scrape_futurepedia
+        from merge.merge_and_upsert import merge_tools_to_supabase
+        print('Iniciando scraping do Futurepedia...')
+        tools = scrape_futurepedia()
+        print(f'Scraped {len(tools)} tools')
+        if tools:
+            stats = merge_tools_to_supabase(tools)
+            print(f'Merge stats: {stats}')
+        else:
+            print('Nenhuma ferramenta encontrada')
+        "
+        
+    - name: Run Phygital Library Scraper
+      if: contains(github.event.inputs.scrapers || 'aitools_directory,theresanaiforthat,futurepedia,phygital_library', 'phygital_library')
+      run: |
+        echo "🤖 Executando scraper do Phygital Library..."
+        python -c "
+        from scrapers.phygital_library import scrape_phygital_library
+        from merge.merge_and_upsert import merge_tools_to_supabase
+        print('Iniciando scraping do Phygital Library...')
+        tools = scrape_phygital_library()
+        print(f'Scraped {len(tools)} tools')
+        if tools:
+            stats = merge_tools_to_supabase(tools)
+            print(f'Merge stats: {stats}')
+        else:
+            print('Nenhuma ferramenta encontrada')
+        "
+        
+    - name: Cleanup Duplicates
+      run: |
+        echo "🧹 Limpando duplicatas..."
+        python -c "
+        from merge.merge_and_upsert import cleanup_supabase_duplicates
+        removed = cleanup_supabase_duplicates()
+        print(f'Removed {removed} duplicates')
+        "
+        
+    - name: Calculate Synergies
+      if: github.event.inputs.calculate_synergies == 'true' || github.event_name == 'schedule'
+      run: |
+        echo "🔗 Calculando sinergias..."
+        python -c "
+        from synergy.build_synergy import build_synergies
+        stats = build_synergies()
+        print(f'Synergy calculation stats: {stats}')
+        "
+        
+    - name: Generate Statistics Report
+      run: |
+        echo "📊 Gerando relatório de estatísticas..."
+        python -c "
+        from merge.merge_and_upsert import get_supabase_statistics
+        from synergy.build_synergy import get_synergy_stats
+        
+        print('=== ESTATÍSTICAS DO BANCO ===')
+        db_stats = get_supabase_statistics()
+        for key, value in db_stats.items():
+            print(f'{key}: {value}')
+        
+        print('\n=== ESTATÍSTICAS DE SINERGIAS ===')
+        synergy_stats = get_synergy_stats()
+        for key, value in synergy_stats.items():
+            print(f'{key}: {value}')
+        "
+        
+    - name: Notify on Success
+      if: success()
+      run: |
+        echo "✅ Scraping e sincronização concluídos com sucesso!"
+        echo "📅 Timestamp: $(date)"
+        
+    - name: Notify on Failure
+      if: failure()
+      run: |
+        echo "❌ Erro durante o scraping ou sincronização!"
+        echo "📅 Timestamp: $(date)"
+        echo "::error::Workflow failed - check logs for details"
