@@ -10,6 +10,7 @@ import random
 import requests
 from bs4 import BeautifulSoup
 from typing import List, Optional, Dict
+from datetime import datetime
 from .common import BaseScraper, AITool
 
 class ToolifyScraper(BaseScraper):
@@ -408,6 +409,62 @@ class ToolifyScraper(BaseScraper):
         # Classificação de domínio
         macro_domain = self.classify_domain(categories, description)
         
+        # Extrai informações adicionais
+        # Logo URL
+        logo_url = self.extract_logo_url(card_element, href)
+        
+        # Platform info
+        platform = self.extract_platform_info(card_element, description)
+        
+        # Features
+        features = self.extract_features(card_element, description)
+        
+        # Rank baseado na posição na página
+        rank = index + 1
+        
+        # Upvotes - busca por padrões de votação
+        upvotes = None
+        element_text = card_element.get_text()
+        upvotes_patterns = [
+            r'(\d+)\s*(?:votes?|upvotes?|likes?)', 
+            r'(\d+)\s*👍', 
+            r'(\d+)\s*⭐'
+        ]
+        upvotes = self.extract_numeric_value(element_text, upvotes_patterns)
+        
+        # Monthly users
+        monthly_users = None
+        users_patterns = [
+            r'(\d+(?:,\d+)*)\s*(?:monthly\s+)?users?',
+            r'(\d+(?:,\d+)*)\s*people\s+use',
+            r'(\d+(?:k|K|m|M))\s*users?'
+        ]
+        monthly_users = self.extract_numeric_value(element_text, users_patterns)
+        
+        # Converte K/M notation
+        if monthly_users and any(suffix in element_text.lower() for suffix in ['k', 'm']):
+            if 'k' in element_text.lower():
+                monthly_users *= 1000
+            elif 'm' in element_text.lower():
+                monthly_users *= 1000000
+        
+        # Editor score baseado na popularidade
+        editor_score = None
+        if popularity > 10:
+            editor_score = min(10.0, round(popularity / 10, 1))
+        
+        # Maturity
+        maturity = None
+        maturity_text = element_text.lower()
+        if 'beta' in maturity_text:
+            maturity = 'beta'
+        elif 'alpha' in maturity_text:
+            maturity = 'alpha'
+        elif 'new' in maturity_text:
+            maturity = 'beta'
+        elif any(term in maturity_text for term in ['established', 'stable', 'mature']):
+            maturity = 'stable'
+        
         return AITool(
             ext_id=ext_id,
             name=name,
@@ -416,7 +473,18 @@ class ToolifyScraper(BaseScraper):
             popularity=float(popularity),
             categories=categories,
             source=self.source_name,
-            macro_domain=macro_domain
+            macro_domain=macro_domain,
+            # Enhanced fields
+            url=href,
+            logo_url=logo_url,
+            rank=rank,
+            upvotes=upvotes,
+            monthly_users=monthly_users,
+            editor_score=editor_score,
+            maturity=maturity,
+            platform=platform,
+            features=features,
+            last_scraped=datetime.now()
         )
     
     def _infer_categories_from_text(self, text: str) -> List[str]:

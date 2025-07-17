@@ -1,0 +1,38 @@
+[
+  {
+    "source_tool_id": "node_1",
+    "target_tool_id": "node_2",
+    "relationship_type": "similar_functionality",
+    "strength": 0.85,
+    "edge_color": "#3B82F6",
+    "edge_width": 2.5,
+    "description": "Both are conversational AI assistants"
+  },
+  {
+    "source_tool_id": "node_3",
+    "target_tool_id": "node_5",
+    "relationship_type": "similar_functionality",
+    "strength": 0.9,
+    "edge_color": "#10B981",
+    "edge_width": 3.0,
+    "description": "Both generate images from text prompts"
+  },
+  {
+    "source_tool_id": "node_1",
+    "target_tool_id": "node_4",
+    "relationship_type": "integrates_with",
+    "strength": 0.7,
+    "edge_color": "#8B5CF6",
+    "edge_width": 2.0,
+    "description": "ChatGPT can help with coding tasks"
+  },
+  {
+    "source_tool_id": "node_2",
+    "target_tool_id": "node_4",
+    "relationship_type": "integrates_with",
+    "strength": 0.65,
+    "edge_color": "#8B5CF6",
+    "edge_width": 1.8,
+    "description": "Claude can assist with software development"
+  }
+]

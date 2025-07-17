@@ -1,8 +1,9 @@
 import requests
 import time
 import random
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
+from datetime import datetime
 
 @dataclass
 class AITool:
@@ -14,6 +15,17 @@ class AITool:
     categories: List[str]
     source: str
     macro_domain: str = "OTHER"
+    # New enhanced fields
+    url: Optional[str] = None
+    logo_url: Optional[str] = None
+    rank: Optional[int] = None
+    upvotes: Optional[int] = None
+    monthly_users: Optional[int] = None
+    editor_score: Optional[float] = None
+    maturity: Optional[str] = None
+    platform: Optional[List[str]] = None
+    features: Optional[Dict[str, Any]] = None
+    last_scraped: Optional[datetime] = None
 
 class BaseScraper:
     def __init__(self, source_name: str, base_url: str):
@@ -62,3 +74,107 @@ class BaseScraper:
                 return domain
         
         return 'OTHER'
+    
+    def extract_logo_url(self, element, tool_url: str = "") -> Optional[str]:
+        """Extrai URL do logo da ferramenta"""
+        # Busca por imagens no elemento
+        img_selectors = ['img', 'img[alt*="logo"]', '[class*="logo"] img', '[class*="icon"] img']
+        
+        for selector in img_selectors:
+            img = element.select_one(selector)
+            if img:
+                src = img.get('src') or img.get('data-src') or img.get('data-lazy')
+                if src:
+                    # Torna URL absoluta se necessário
+                    if src.startswith('/'):
+                        return self.base_url + src
+                    elif src.startswith('http'):
+                        return src
+                    elif tool_url:
+                        # Tenta construir URL baseada na URL da ferramenta
+                        from urllib.parse import urljoin
+                        return urljoin(tool_url, src)
+        
+        return None
+    
+    def extract_platform_info(self, element, text: str = "") -> List[str]:
+        """Extrai informações de plataforma"""
+        platforms = []
+        combined_text = (element.get_text() if hasattr(element, 'get_text') else str(element)) + " " + text
+        combined_text = combined_text.lower()
+        
+        platform_keywords = {
+            'web': ['web', 'browser', 'online', 'website'],
+            'ios': ['ios', 'iphone', 'ipad', 'app store'],
+            'android': ['android', 'google play', 'play store'],
+            'mac': ['mac', 'macos', 'apple'],
+            'windows': ['windows', 'pc', 'microsoft'],
+            'linux': ['linux', 'ubuntu'],
+            'api': ['api', 'integration', 'webhook'],
+            'chrome': ['chrome extension', 'chrome', 'browser extension'],
+            'slack': ['slack', 'slack bot'],
+            'discord': ['discord', 'discord bot']
+        }
+        
+        for platform, keywords in platform_keywords.items():
+            if any(keyword in combined_text for keyword in keywords):
+                platforms.append(platform)
+        
+        return platforms if platforms else ['web']  # Default to web
+    
+    def extract_numeric_value(self, text: str, patterns: List[str]) -> Optional[int]:
+        """Extrai valores numéricos usando regex patterns"""
+        import re
+        
+        for pattern in patterns:
+            match = re.search(pattern, text, re.IGNORECASE)
+            if match:
+                try:
+                    # Remove vírgulas e converte
+                    value_str = match.group(1).replace(',', '').replace('.', '')
+                    return int(value_str)
+                except (ValueError, IndexError):
+                    continue
+        
+        return None
+    
+    def extract_features(self, element, description: str = "") -> Dict[str, Any]:
+        """Extrai features/características da ferramenta"""
+        features = {}
+        
+        # Busca por badges/tags que indicam features
+        feature_selectors = ['.tag', '.badge', '.feature', '[class*="tag"]', '[class*="badge"]']
+        
+        feature_tags = []
+        for selector in feature_selectors:
+            tags = element.select(selector)
+            for tag in tags:
+                tag_text = tag.get_text().strip()
+                if tag_text and len(tag_text) < 30:  # Evita textos muito longos
+                    feature_tags.append(tag_text)
+        
+        if feature_tags:
+            features['tags'] = feature_tags
+        
+        # Extrai características do texto/descrição
+        text_content = (element.get_text() if hasattr(element, 'get_text') else str(element)) + " " + description
+        text_lower = text_content.lower()
+        
+        # Features comuns de ferramentas AI
+        feature_checks = {
+            'free_tier': any(term in text_lower for term in ['free', 'free tier', 'freemium']),
+            'api_available': any(term in text_lower for term in ['api', 'integration', 'webhook']),
+            'no_code': any(term in text_lower for term in ['no code', 'no-code', 'drag and drop']),
+            'open_source': any(term in text_lower for term in ['open source', 'github', 'open-source']),
+            'enterprise': any(term in text_lower for term in ['enterprise', 'business', 'team']),
+            'real_time': any(term in text_lower for term in ['real time', 'real-time', 'live']),
+            'mobile_app': any(term in text_lower for term in ['mobile app', 'ios', 'android']),
+            'collaboration': any(term in text_lower for term in ['collaboration', 'team', 'share'])
+        }
+        
+        # Adiciona apenas features que são True
+        for feature, is_present in feature_checks.items():
+            if is_present:
+                features[feature] = True
+        
+        return features if features else None

@@ -10,6 +10,7 @@ import random
 import re
 from bs4 import BeautifulSoup
 from typing import List, Optional
+from datetime import datetime
 from .common import BaseScraper, AITool
 
 class TheresAnAIForThatScraperAdvanced(BaseScraper):
@@ -452,8 +453,9 @@ class TheresAnAIForThatScraperAdvanced(BaseScraper):
             if link_elem:
                 href = link_elem.get('href', '')
         
+        tool_url = href
         if href and href.startswith('/'):
-            href = self.base_url + href
+            tool_url = self.base_url + href
         
         # Categorias
         categories = []
@@ -545,6 +547,63 @@ class TheresAnAIForThatScraperAdvanced(BaseScraper):
         # ID único
         ext_id = self._generate_ext_id(href, name, index)
         
+        # Extrai informações adicionais
+        # Logo URL
+        logo_url = self.extract_logo_url(element, tool_url)
+        
+        # Platform info
+        platform = self.extract_platform_info(element, description)
+        
+        # Features
+        features = self.extract_features(element, description)
+        
+        # Rank baseado na posição
+        rank = index + 1
+        
+        # Upvotes - TheresAnAI pode ter sistemas de voting
+        upvotes = None
+        element_text = element.get_text()
+        upvotes_patterns = [
+            r'(\d+)\s*(?:votes?|upvotes?|likes?)', 
+            r'(\d+)\s*👍', 
+            r'(\d+)\s*hearts?'
+        ]
+        upvotes = self.extract_numeric_value(element_text, upvotes_patterns)
+        
+        # Monthly users
+        monthly_users = None
+        users_patterns = [
+            r'(\d+(?:,\d+)*)\s*(?:monthly\s+)?users?',
+            r'(\d+(?:,\d+)*)\s*people\s+use',
+            r'used\s+by\s+(\d+(?:,\d+)*)',
+            r'(\d+(?:k|K|m|M))\s*users?'
+        ]
+        monthly_users = self.extract_numeric_value(element_text, users_patterns)
+        
+        # Converte K/M notation
+        if monthly_users and any(suffix in element_text.lower() for suffix in ['k', 'm']):
+            if 'k' in element_text.lower():
+                monthly_users *= 1000
+            elif 'm' in element_text.lower():
+                monthly_users *= 1000000
+        
+        # Editor score baseado na popularidade
+        editor_score = None
+        if popularity > 10:
+            editor_score = min(10.0, round(popularity / 10, 1))
+        
+        # Maturity
+        maturity = None
+        maturity_text = element_text.lower()
+        if 'beta' in maturity_text:
+            maturity = 'beta'
+        elif 'alpha' in maturity_text:
+            maturity = 'alpha'
+        elif 'new' in maturity_text:
+            maturity = 'beta'
+        elif any(term in maturity_text for term in ['established', 'stable', 'mature']):
+            maturity = 'stable'
+        
         # Classificação de domínio
         macro_domain = self.classify_domain(categories, description)
         
@@ -556,7 +615,18 @@ class TheresAnAIForThatScraperAdvanced(BaseScraper):
             popularity=float(popularity),
             categories=categories,
             source=self.source_name,
-            macro_domain=macro_domain
+            macro_domain=macro_domain,
+            # Enhanced fields
+            url=tool_url,
+            logo_url=logo_url,
+            rank=rank,
+            upvotes=upvotes,
+            monthly_users=monthly_users,
+            editor_score=editor_score,
+            maturity=maturity,
+            platform=platform,
+            features=features,
+            last_scraped=datetime.now()
         )
     
     def _parse_api_tool(self, data: dict, index: int) -> Optional[AITool]:
@@ -620,6 +690,45 @@ class TheresAnAIForThatScraperAdvanced(BaseScraper):
         # ID único
         ext_id = self._generate_ext_id(href, name, index)
         
+        # Enhanced fields for API tools
+        # URL
+        tool_url = href
+        
+        # Logo URL - não disponível via API geralmente
+        logo_url = None
+        
+        # Platform info - pode estar nos dados
+        platform = data.get('platforms', ['web'])
+        if isinstance(platform, str):
+            platform = [platform]
+        
+        # Features - pode estar nos dados como tags/categories
+        features = {}
+        if 'tags' in data:
+            features['tags'] = data['tags']
+        if 'features' in data:
+            features.update(data['features'])
+        
+        # Rank baseado no índice
+        rank = index + 1
+        
+        # Upvotes/rating - pode estar nos dados
+        upvotes = data.get('upvotes') or data.get('likes') or data.get('votes')
+        
+        # Monthly users - pode estar nos dados  
+        monthly_users = data.get('monthly_users') or data.get('users') or data.get('usage')
+        
+        # Editor score - pode estar nos dados como rating
+        editor_score = data.get('editor_score') or data.get('rating')
+        if editor_score and isinstance(editor_score, (int, float)):
+            # Normaliza para escala 0-10
+            if editor_score > 10:
+                editor_score = editor_score / 10
+            editor_score = round(float(editor_score), 1)
+        
+        # Maturity - pode estar nos dados
+        maturity = data.get('maturity') or data.get('status')
+        
         # Classificação de domínio
         macro_domain = self.classify_domain(categories, description)
         
@@ -631,7 +740,18 @@ class TheresAnAIForThatScraperAdvanced(BaseScraper):
             popularity=float(popularity),
             categories=categories,
             source=self.source_name,
-            macro_domain=macro_domain
+            macro_domain=macro_domain,
+            # Enhanced fields
+            url=tool_url,
+            logo_url=logo_url,
+            rank=rank,
+            upvotes=upvotes,
+            monthly_users=monthly_users,
+            editor_score=editor_score,
+            maturity=maturity,
+            platform=platform,
+            features=features if features else None,
+            last_scraped=datetime.now()
         )
     
     def _infer_categories_from_text(self, text: str) -> List[str]:

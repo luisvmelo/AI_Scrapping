@@ -8,6 +8,7 @@ import re
 import time
 from bs4 import BeautifulSoup
 from typing import List
+from datetime import datetime
 from .common import BaseScraper, AITool
 
 class FuturepediaScraper(BaseScraper):
@@ -175,6 +176,12 @@ class FuturepediaScraper(BaseScraper):
         href = link_element.get('href', '')
         if not ('/tool/' in href):
             return None
+        
+        # Torna URL absoluta se necessário
+        if href.startswith('/'):
+            tool_url = self.base_url + href
+        else:
+            tool_url = href
         
         # Nome da ferramenta - busca no elemento pai e nos elementos próximos
         name = ""
@@ -350,6 +357,50 @@ class FuturepediaScraper(BaseScraper):
         tool_slug = href.split('/tool/')[-1]  # Funciona para URLs completas e relativas
         ext_id = f"fp_{tool_slug}"
         
+        # Extrai informações adicionais
+        # Logo URL
+        logo_url = self.extract_logo_url(parent_element or link_element, tool_url)
+        
+        # Platform info
+        platform = self.extract_platform_info(parent_element or link_element, description)
+        
+        # Features
+        features = self.extract_features(parent_element or link_element, description)
+        
+        # Rank baseado na posição na página (ferramentas no topo são mais relevantes)
+        rank = index + 1
+        
+        # Upvotes - tenta extrair de elementos de rating/votes
+        upvotes = None
+        upvotes_patterns = [r'(\d+)\s*(?:votes?|upvotes?)', r'(\d+)\s*👍', r'(\d+)\s*likes?']
+        element_text = (parent_element.get_text() if parent_element else link_element.get_text())
+        upvotes = self.extract_numeric_value(element_text, upvotes_patterns)
+        
+        # Monthly users - busca por padrões de usuários
+        monthly_users = None
+        users_patterns = [
+            r'(\d+(?:,\d+)*)\s*(?:monthly\s+)?users?',
+            r'(\d+(?:,\d+)*)\s*people\s+use',
+            r'(\d+(?:,\d+)*)\s*active\s+users?'
+        ]
+        monthly_users = self.extract_numeric_value(element_text, users_patterns)
+        
+        # Editor score baseado no rating do Futurepedia
+        editor_score = None
+        if popularity and popularity > 0:
+            # Converte popularidade (0-100) para score (0-10)
+            editor_score = round(popularity / 10, 1)
+        
+        # Maturity - infere do texto
+        maturity = None
+        maturity_text = element_text.lower()
+        if 'beta' in maturity_text:
+            maturity = 'beta'
+        elif 'alpha' in maturity_text:
+            maturity = 'alpha'
+        elif any(term in maturity_text for term in ['stable', 'production', 'ga', 'v1', 'version 1']):
+            maturity = 'stable'
+        
         # Classificação de domínio
         macro_domain = self.classify_domain(categories, description)
         
@@ -361,7 +412,18 @@ class FuturepediaScraper(BaseScraper):
             popularity=float(popularity),
             categories=categories,
             source=self.source_name,
-            macro_domain=macro_domain
+            macro_domain=macro_domain,
+            # Enhanced fields
+            url=tool_url,
+            logo_url=logo_url,
+            rank=rank,
+            upvotes=upvotes,
+            monthly_users=monthly_users,
+            editor_score=editor_score,
+            maturity=maturity,
+            platform=platform,
+            features=features,
+            last_scraped=datetime.now()
         )
     
     def _infer_categories_from_text(self, text: str) -> List[str]:

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "node_1",
+    "name": "OpenAI ChatGPT",
+    "popularity": 98.0,
+    "macro_domain": "NLP",
+    "categories": [
+      "chatbot",
+      "writing",
+      "productivity"
+    ],
+    "url": "https://chat.openai.com",
+    "logo_url": "https://openai.com/favicon.ico",
+    "node_color": "#3B82F6",
+    "node_size": 2.95,
+    "graph_position": {
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "monthly_users": 200000000,
+    "editor_score": 9.8
+  },
+  {
+    "id": "node_2",
+    "name": "Anthropic Claude",
+    "popularity": 92.0,
+    "macro_domain": "NLP",
+    "categories": [
+      "chatbot",
+      "analysis",
+      "writing"
+    ],
+    "url": "https://claude.ai",
+    "logo_url": "https://anthropic.com/favicon.ico",
+    "node_color": "#3B82F6",
+    "node_size": 2.8,
+    "graph_position": {
+      "x": 5,
+      "y": 2,
+      "z": 1
+    },
+    "monthly_users": 50000000,
+    "editor_score": 9.5
+  },
+  {
+    "id": "node_3",
+    "name": "Midjourney",
+    "popularity": 90.0,
+    "macro_domain": "COMPUTER_VISION",
+    "categories": [
+      "image",
+      "art",
+      "design"
+    ],
+    "url": "https://midjourney.com",
+    "logo_url": "https://midjourney.com/logo.png",
+    "node_color": "#10B981",
+    "node_size": 2.75,
+    "graph_position": {
+      "x": -3,
+      "y": 4,
+      "z": -2
+    },
+    "monthly_users": 15000000,
+    "editor_score": 9.2
+  },
+  {
+    "id": "node_4",
+    "name": "GitHub Copilot",
+    "popularity": 88.0,
+    "macro_domain": "CODING",
+    "categories": [
+      "coding",
+      "development",
+      "productivity"
+    ],
+    "url": "https://github.com/features/copilot",
+    "logo_url": "https://github.com/favicon.ico",
+    "node_color": "#6366F1",
+    "node_size": 2.7,
+    "graph_position": {
+      "x": 2,
+      "y": -3,
+      "z": 4
+    },
+    "monthly_users": 5000000,
+    "editor_score": 9.0
+  },
+  {
+    "id": "node_5",
+    "name": "Stable Diffusion",
+    "popularity": 85.0,
+    "macro_domain": "COMPUTER_VISION",
+    "categories": [
+      "image",
+      "ai",
+      "open-source"
+    ],
+    "url": "https://stability.ai/stablediffusion",
+    "logo_url": "https://stability.ai/favicon.ico",
+    "node_color": "#10B981",
+    "node_size": 2.625,
+    "graph_position": {
+      "x": -5,
+      "y": 3,
+      "z": -1
+    },
+    "monthly_users": 8000000,
+    "editor_score": 8.8
+  }
+]
