@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Universe - 200 Nodes</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/three@0.178.0/build/three.min.js"></script>
+    <script src="https://unpkg.com/react-force-graph-3d@1.28.0/dist/react-force-graph-3d.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script>
+        const { useState, useEffect, useCallback, useRef } = React;
+        
+        // Categories
+        const CATEGORIES = {
+            NLP: { color: '#4F46E5', name: 'Natural Language Processing' },
+            COMPUTER_VISION: { color: '#DC2626', name: 'Computer Vision' },
+            CODING: { color: '#059669', name: 'Coding & Development' },
+            OTHER: { color: '#7C3AED', name: 'Other AI Tools' },
+            AUDIO: { color: '#EA580C', name: 'Audio & Music' },
+            VIDEO: { color: '#DB2777', name: 'Video & Animation' },
+            PRODUCTIVITY: { color: '#2563EB', name: 'Productivity' },
+            BUSINESS: { color: '#0891B2', name: 'Business & Marketing' }
+        };
+
+        // Sample of 50 nodes from the 200 (for performance in standalone)
+        const mockData = {
+            nodes: [
+                { id: 1, name: "ChatGPT", category: "NLP", val: 5.2, color: "#4F46E5", popularity: 98, connections: 45, monthly_users: 200000000, description: "OpenAI's conversational AI assistant", possibleConnections: [{name: "Claude", type: "complementary"}, {name: "Gemini", type: "competitive"}, {name: "ElevenLabs", type: "workflow"}] },
+                { id: 2, name: "Bolt.new", category: "CODING", val: 4.9, color: "#059669", popularity: 95, connections: 38, monthly_users: 2000000, description: "AI-powered full-stack web development platform", possibleConnections: [{name: "Cursor", type: "complementary"}, {name: "Lovable", type: "competitive"}, {name: "V0 by Vercel", type: "functional"}] },
+                { id: 3, name: "Claude", category: "NLP", val: 4.7, color: "#4F46E5", popularity: 92, connections: 42, monthly_users: 50000000, description: "Anthropic's AI assistant for conversations and text", possibleConnections: [{name: "ChatGPT", type: "complementary"}, {name: "Character.AI", type: "functional"}] },
+                { id: 4, name: "Cursor", category: "CODING", val: 4.8, color: "#059669", popularity: 94, connections: 35, monthly_users: 3000000, description: "AI-powered code editor", possibleConnections: [{name: "GitHub Copilot", type: "complementary"}, {name: "Bolt.new", type: "functional"}] },
+                { id: 5, name: "Midjourney", category: "COMPUTER_VISION", val: 4.6, color: "#DC2626", popularity: 90, connections: 40, monthly_users: 15000000, description: "AI image generation platform", possibleConnections: [{name: "DALL-E 2", type: "competitive"}, {name: "Stable Diffusion", type: "competitive"}, {name: "Leonardo AI", type: "competitive"}] },
+                { id: 6, name: "Lovable", category: "CODING", val: 4.7, color: "#059669", popularity: 92, connections: 33, monthly_users: 1500000, description: "AI website builder that generates full applications", possibleConnections: [{name: "Bolt.new", type: "competitive"}, {name: "V0 by Vercel", type: "competitive"}] },
+                { id: 7, name: "DALL-E 2", category: "COMPUTER_VISION", val: 4.5, color: "#DC2626", popularity: 88, connections: 37, monthly_users: 8000000, description: "OpenAI's image generation model", possibleConnections: [{name: "Midjourney", type: "competitive"}, {name: "Stable Diffusion", type: "competitive"}] },
+                { id: 8, name: "V0 by Vercel", category: "CODING", val: 4.6, color: "#059669", popularity: 90, connections: 31, monthly_users: 1800000, description: "AI UI generator for React components", possibleConnections: [{name: "Bolt.new", type: "functional"}, {name: "GitHub Copilot", type: "functional"}] },
+                { id: 9, name: "NotebookLM", category: "PRODUCTIVITY", val: 4.5, color: "#2563EB", popularity: 88, connections: 29, monthly_users: 3000000, description: "Google's AI research assistant for documents", possibleConnections: [{name: "ChatGPT", type: "functional"}, {name: "Perplexity", type: "functional"}] },
+                { id: 10, name: "Character.AI", category: "NLP", val: 4.4, color: "#4F46E5", popularity: 87, connections: 36, monthly_users: 8000000, description: "AI chatbots with distinct personalities", possibleConnections: [{name: "Claude", type: "functional"}, {name: "Poe", type: "complementary"}] },
+                { id: 11, name: "Stable Diffusion", category: "COMPUTER_VISION", val: 4.3, color: "#DC2626", popularity: 85, connections: 34, monthly_users: 5000000, description: "Open-source image generation model", possibleConnections: [{name: "Midjourney", type: "competitive"}, {name: "DALL-E 2", type: "competitive"}] },
+                { id: 12, name: "GitHub Copilot", category: "CODING", val: 4.5, color: "#059669", popularity: 88, connections: 39, monthly_users: 10000000, description: "AI coding assistant", possibleConnections: [{name: "Cursor", type: "complementary"}, {name: "V0 by Vercel", type: "functional"}, {name: "Tabnine", type: "competitive"}] },
+                { id: 13, name: "ElevenLabs", category: "AUDIO", val: 4.2, color: "#EA580C", popularity: 84, connections: 28, monthly_users: 2000000, description: "AI voice synthesis", possibleConnections: [{name: "Suno AI", type: "complementary"}, {name: "ChatGPT", type: "workflow"}, {name: "Murf", type: "competitive"}] },
+                { id: 14, name: "Suno AI", category: "AUDIO", val: 4.2, color: "#EA580C", popularity: 84, connections: 26, monthly_users: 2500000, description: "AI music generation from text prompts", possibleConnections: [{name: "ElevenLabs", type: "complementary"}, {name: "AIVA", type: "competitive"}] },
+                { id: 15, name: "Runway ML", category: "VIDEO", val: 4.1, color: "#DB2777", popularity: 82, connections: 30, monthly_users: 1800000, description: "AI video and image editing", possibleConnections: [{name: "Midjourney", type: "functional"}, {name: "Synthesia", type: "competitive"}] },
+                { id: 16, name: "Poe", category: "NLP", val: 4.3, color: "#4F46E5", popularity: 85, connections: 32, monthly_users: 5000000, description: "AI chatbot platform by Quora with multiple models", possibleConnections: [{name: "Character.AI", type: "complementary"}, {name: "ChatGPT", type: "functional"}] },
+                { id: 17, name: "Luma AI", category: "COMPUTER_VISION", val: 4.1, color: "#DC2626", popularity: 83, connections: 25, monthly_users: 1000000, description: "AI 3D scene generation and video creation", possibleConnections: [{name: "Midjourney", type: "functional"}, {name: "Runway ML", type: "functional"}] },
+                { id: 18, name: "Jasper", category: "BUSINESS", val: 4.0, color: "#0891B2", popularity: 81, connections: 27, monthly_users: 1500000, description: "AI content writing platform", possibleConnections: [{name: "Copy.ai", type: "competitive"}, {name: "Canva AI", type: "workflow"}] },
+                { id: 19, name: "Copy.ai", category: "BUSINESS", val: 3.9, color: "#0891B2", popularity: 79, connections: 24, monthly_users: 1200000, description: "AI copywriting tool", possibleConnections: [{name: "Jasper", type: "competitive"}, {name: "Leonardo AI", type: "workflow"}] },
+                { id: 20, name: "Perplexity", category: "NLP", val: 4.3, color: "#4F46E5", popularity: 86, connections: 33, monthly_users: 4000000, description: "AI-powered search engine", possibleConnections: [{name: "ChatGPT", type: "functional"}, {name: "NotebookLM", type: "functional"}] },
+                { id: 21, name: "Gemini", category: "NLP", val: 4.3, color: "#4F46E5", popularity: 85, connections: 35, monthly_users: 25000000, description: "Google's advanced AI model", possibleConnections: [{name: "ChatGPT", type: "competitive"}, {name: "Claude", type: "competitive"}] },
+                { id: 22, name: "Grammarly", category: "PRODUCTIVITY", val: 4.2, color: "#2563EB", popularity: 84, connections: 25, monthly_users: 30000000, description: "AI-powered writing assistant", possibleConnections: [{name: "Notion AI", type: "functional"}, {name: "Wordtune", type: "competitive"}] },
+                { id: 23, name: "Notion AI", category: "PRODUCTIVITY", val: 4.1, color: "#2563EB", popularity: 82, connections: 28, monthly_users: 20000000, description: "AI-powered workspace and note-taking", possibleConnections: [{name: "Grammarly", type: "functional"}, {name: "Tome", type: "workflow"}] },
+                { id: 24, name: "Canva AI", category: "COMPUTER_VISION", val: 4.0, color: "#DC2626", popularity: 81, connections: 26, monthly_users: 15000000, description: "AI design tools within Canva platform", possibleConnections: [{name: "Adobe Firefly", type: "competitive"}, {name: "Jasper", type: "workflow"}] },
+                { id: 25, name: "Adobe Firefly", category: "COMPUTER_VISION", val: 4.0, color: "#DC2626", popularity: 80, connections: 24, monthly_users: 8000000, description: "Adobe's AI creative suite", possibleConnections: [{name: "Canva AI", type: "competitive"}, {name: "Bolt.new", type: "workflow"}] }
+            ],
+            links: [
+                { source: 1, target: 3, color: "rgba(34, 197, 94, 0.6)", strength: 0.9, type: "complementary", description: "Both leading conversational AI assistants with different strengths" },
+                { source: 1, target: 21, color: "rgba(239, 68, 68, 0.6)", strength: 0.85, type: "competitive", description: "Competing conversational AI platforms from OpenAI and Google" },
+                { source: 2, target: 4, color: "rgba(34, 197, 94, 0.6)", strength: 0.8, type: "complementary", description: "Full-stack development platform pairs well with AI-powered code editor" },
+                { source: 2, target: 6, color: "rgba(239, 68, 68, 0.6)", strength: 0.9, type: "competitive", description: "Both are AI website builders competing in the same space" },
+                { source: 2, target: 8, color: "rgba(59, 130, 246, 0.6)", strength: 0.85, type: "functional", description: "Bolt.new for full apps, V0 for React components - workflow integration" },
+                { source: 4, target: 12, color: "rgba(34, 197, 94, 0.6)", strength: 0.9, type: "complementary", description: "Cursor editor works excellently with GitHub Copilot suggestions" },
+                { source: 5, target: 7, color: "rgba(239, 68, 68, 0.6)", strength: 0.9, type: "competitive", description: "Leading image generation platforms with different approaches" },
+                { source: 5, target: 11, color: "rgba(239, 68, 68, 0.6)", strength: 0.85, type: "competitive", description: "Midjourney vs Stable Diffusion - commercial vs open source" },
+                { source: 7, target: 11, color: "rgba(239, 68, 68, 0.6)", strength: 0.8, type: "competitive", description: "DALL-E vs Stable Diffusion in AI image generation" },
+                { source: 8, target: 12, color: "rgba(59, 130, 246, 0.6)", strength: 0.7, type: "functional", description: "V0 components can be enhanced with Copilot suggestions" },
+                { source: 6, target: 8, color: "rgba(239, 68, 68, 0.6)", strength: 0.8, type: "competitive", description: "Lovable vs V0 - both generate web components" },
+                { source: 13, target: 14, color: "rgba(34, 197, 94, 0.6)", strength: 0.8, type: "complementary", description: "Voice synthesis pairs well with AI music generation" },
+                { source: 1, target: 13, color: "rgba(168, 85, 247, 0.6)", strength: 0.6, type: "workflow", description: "ChatGPT text can be converted to speech with ElevenLabs" },
+                { source: 18, target: 19, color: "rgba(239, 68, 68, 0.6)", strength: 0.9, type: "competitive", description: "Both AI copywriting platforms targeting similar markets" },
+                { source: 1, target: 9, color: "rgba(59, 130, 246, 0.6)", strength: 0.8, type: "functional", description: "ChatGPT and NotebookLM both excel at research assistance" },
+                { source: 3, target: 10, color: "rgba(59, 130, 246, 0.6)", strength: 0.7, type: "functional", description: "Claude and Character.AI both focus on conversational AI" },
+                { source: 16, target: 10, color: "rgba(34, 197, 94, 0.6)", strength: 0.8, type: "complementary", description: "Poe platform includes Character.AI-style bots" },
+                { source: 20, target: 1, color: "rgba(59, 130, 246, 0.6)", strength: 0.7, type: "functional", description: "Perplexity search complements ChatGPT conversations" },
+                { source: 15, target: 5, color: "rgba(59, 130, 246, 0.6)", strength: 0.6, type: "functional", description: "Runway video editing enhanced with Midjourney images" },
+                { source: 17, target: 5, color: "rgba(59, 130, 246, 0.6)", strength: 0.6, type: "functional", description: "Luma 3D generation works with Midjourney for textures" },
+                { source: 22, target: 23, color: "rgba(59, 130, 246, 0.6)", strength: 0.7, type: "functional", description: "Grammarly and Notion AI both enhance writing workflows" },
+                { source: 24, target: 25, color: "rgba(239, 68, 68, 0.6)", strength: 0.8, type: "competitive", description: "Canva AI vs Adobe Firefly in AI-powered design tools" },
+                { source: 18, target: 24, color: "rgba(168, 85, 247, 0.6)", strength: 0.7, type: "workflow", description: "Jasper content creation paired with Canva AI design" },
+                { source: 19, target: 25, color: "rgba(168, 85, 247, 0.6)", strength: 0.6, type: "workflow", description: "Copy.ai text with Adobe Firefly generated images" },
+                { source: 9, target: 20, color: "rgba(59, 130, 246, 0.6)", strength: 0.8, type: "functional", description: "NotebookLM and Perplexity both excel at research" }
+            ]
+        };
+
+        function AIUniverse() {
+            const [selectedNode, setSelectedNode] = useState(null);
+            const [selectedLink, setSelectedLink] = useState(null);
+            const [data] = useState(mockData);
+
+            const handleNodeClick = useCallback((node) => {
+                setSelectedNode(node);
+                setSelectedLink(null);
+                console.log('Node clicked:', node.name);
+            }, []);
+
+            const handleLinkClick = useCallback((link) => {
+                setSelectedLink(link);
+                setSelectedNode(null);
+                console.log('Link clicked:', link);
+            }, []);
+
+            const handleNodeHover = useCallback((node) => {
+                document.body.style.cursor = node ? 'pointer' : 'default';
+            }, []);
+
+            const handleLinkHover = useCallback((link) => {
+                document.body.style.cursor = link ? 'pointer' : 'default';
+            }, []);
+
+            return React.createElement('div', {
+                style: { width: '100vw', height: '100vh', backgroundColor: 'black', position: 'relative' }
+            }, [
+                React.createElement(ForceGraph3D, {
+                    key: 'graph',
+                    graphData: data,
+                    nodeVal: node => Math.max(1, node.val || 1),
+                    nodeColor: node => node.color || '#4f46e5',
+                    nodeLabel: node => `${node.name} (${node.category})`,
+                    nodeOpacity: 1,
+                    linkColor: link => link.color || 'rgba(255, 255, 255, 0.3)',
+                    linkWidth: link => Math.max(0.5, (link.strength || 0.5) * 2),
+                    onNodeClick: handleNodeClick,
+                    onNodeHover: handleNodeHover,
+                    onLinkClick: handleLinkClick,
+                    onLinkHover: handleLinkHover,
+                    backgroundColor: "black",
+                    width: window.innerWidth,
+                    height: window.innerHeight,
+                    enableNodeDrag: true,
+                    enableNavigationControls: true,
+                    controlType: "orbit"
+                }),
+                
+                selectedNode && React.createElement('div', {
+                    key: 'node-details',
+                    style: {
+                        position: 'fixed',
+                        top: '20px',
+                        right: '20px',
+                        background: 'rgba(0, 0, 0, 0.8)',
+                        color: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        border: '1px solid #333',
+                        maxWidth: '300px',
+                        maxHeight: '80vh',
+                        overflowY: 'auto'
+                    }
+                }, [
+                    React.createElement('h3', { 
+                        key: 'title',
+                        style: { color: selectedNode.color, margin: '0 0 10px 0' } 
+                    }, selectedNode.name),
+                    React.createElement('p', { key: 'desc' }, selectedNode.description),
+                    React.createElement('p', { key: 'category' }, `Categoria: ${selectedNode.category}`),
+                    React.createElement('p', { key: 'popularity' }, `Popularidade: ${selectedNode.popularity}%`),
+                    React.createElement('p', { key: 'connections' }, `Conexões: ${selectedNode.connections}`),
+                    React.createElement('p', { key: 'users' }, `Usuários: ${(selectedNode.monthly_users / 1000000).toFixed(1)}M`),
+                    
+                    selectedNode.possibleConnections && selectedNode.possibleConnections.length > 0 && React.createElement('div', {
+                        key: 'possible-connections',
+                        style: { marginTop: '15px' }
+                    }, [
+                        React.createElement('h4', { 
+                            key: 'pc-title',
+                            style: { margin: '0 0 8px 0', fontSize: '14px' }
+                        }, 'Possíveis Conexões:'),
+                        React.createElement('div', {
+                            key: 'pc-list',
+                            style: { maxHeight: '120px', overflowY: 'auto' }
+                        }, selectedNode.possibleConnections.map((conn, index) =>
+                            React.createElement('div', {
+                                key: `conn-${index}`,
+                                style: { marginBottom: '5px', fontSize: '12px' }
+                            }, [
+                                React.createElement('strong', { key: 'name' }, conn.name),
+                                ` - ${conn.type}`
+                            ])
+                        ))
+                    ]),
+                    
+                    React.createElement('button', {
+                        key: 'close',
+                        onClick: () => setSelectedNode(null),
+                        style: {
+                            background: '#4f46e5',
+                            color: 'white',
+                            border: 'none',
+                            padding: '8px 16px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            marginTop: '10px'
+                        }
+                    }, 'Fechar')
+                ]),
+
+                selectedLink && React.createElement('div', {
+                    key: 'link-details',
+                    style: {
+                        position: 'fixed',
+                        top: '20px',
+                        right: '20px',
+                        background: 'rgba(0, 0, 0, 0.8)',
+                        color: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        border: '1px solid #333',
+                        maxWidth: '300px'
+                    }
+                }, [
+                    React.createElement('h3', { 
+                        key: 'title',
+                        style: { color: selectedLink.color, margin: '0 0 10px 0' }
+                    }, 'Conexão'),
+                    React.createElement('p', { key: 'type' }, `Tipo: ${selectedLink.type}`),
+                    React.createElement('p', { key: 'strength' }, `Força: ${Math.round((selectedLink.strength || 0.5) * 100)}%`),
+                    selectedLink.description && React.createElement('div', {
+                        key: 'description',
+                        style: { marginTop: '10px' }
+                    }, React.createElement('p', {
+                        style: { fontSize: '14px', lineHeight: '1.4' }
+                    }, [
+                        React.createElement('strong', { key: 'label' }, 'Relação: '),
+                        selectedLink.description
+                    ])),
+                    React.createElement('button', {
+                        key: 'close',
+                        onClick: () => setSelectedLink(null),
+                        style: {
+                            background: '#4f46e5',
+                            color: 'white',
+                            border: 'none',
+                            padding: '8px 16px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            marginTop: '10px'
+                        }
+                    }, 'Fechar')
+                ]),
+
+                React.createElement('div', {
+                    key: 'legend',
+                    style: {
+                        position: 'fixed',
+                        bottom: '20px',
+                        left: '20px',
+                        background: 'rgba(0, 0, 0, 0.8)',
+                        color: 'white',
+                        padding: '15px',
+                        borderRadius: '8px',
+                        border: '1px solid #333',
+                        fontSize: '12px'
+                    }
+                }, [
+                    React.createElement('h4', { 
+                        key: 'legend-title',
+                        style: { margin: '0 0 10px 0' }
+                    }, 'Categorias:'),
+                    Object.entries(CATEGORIES).slice(0, 4).map(([key, category]) =>
+                        React.createElement('div', { 
+                            key: key,
+                            style: { display: 'flex', alignItems: 'center', marginBottom: '5px' }
+                        }, [
+                            React.createElement('div', {
+                                key: 'dot',
+                                style: {
+                                    width: '12px',
+                                    height: '12px',
+                                    backgroundColor: category.color,
+                                    borderRadius: '50%',
+                                    marginRight: '8px'
+                                }
+                            }),
+                            React.createElement('span', { key: 'label' }, category.name)
+                        ])
+                    )
+                ])
+            ]);
+        }
+
+        function App() {
+            return React.createElement(AIUniverse);
+        }
+
+        ReactDOM.render(React.createElement(App), document.getElementById('root'));
+    </script>
+</body>
+</html>

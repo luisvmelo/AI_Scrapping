@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Universe Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 20px;
+        }
+        .node {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 10px;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        .node:hover {
+            transform: scale(1.2);
+        }
+        .node-nlp { background: #4F46E5; }
+        .node-coding { background: #059669; }
+        .node-vision { background: #DC2626; }
+        .node-audio { background: #EA580C; }
+        .node-video { background: #DB2777; }
+        .node-productivity { background: #2563EB; }
+        .node-business { background: #0891B2; }
+        .details {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: none;
+        }
+        .legend {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            font-size: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Universe - Interactive Test</h1>
+        <p>Click any node to see details. This tests the basic functionality before loading the full 3D version.</p>
+        
+        <div class="nodes">
+            <div class="node node-nlp" onclick="showDetails('ChatGPT', 'NLP', 'OpenAI conversational AI assistant', 'Claude, Gemini, ElevenLabs workflow')" title="ChatGPT"></div>
+            <div class="node node-coding" onclick="showDetails('Bolt.new', 'CODING', 'AI-powered full-stack web development', 'Cursor, Lovable, V0 by Vercel')" title="Bolt.new"></div>
+            <div class="node node-nlp" onclick="showDetails('Claude', 'NLP', 'Anthropic AI assistant', 'ChatGPT, Character.AI, Poe')" title="Claude"></div>
+            <div class="node node-coding" onclick="showDetails('Cursor', 'CODING', 'AI-powered code editor', 'GitHub Copilot, Bolt.new, Tabnine')" title="Cursor"></div>
+            <div class="node node-vision" onclick="showDetails('Midjourney', 'COMPUTER_VISION', 'AI image generation platform', 'DALL-E, Stable Diffusion, Leonardo AI')" title="Midjourney"></div>
+            <div class="node node-vision" onclick="showDetails('DALL-E 2', 'COMPUTER_VISION', 'OpenAI image generation', 'Midjourney, Stable Diffusion, Adobe Firefly')" title="DALL-E 2"></div>
+            <div class="node node-audio" onclick="showDetails('ElevenLabs', 'AUDIO', 'AI voice synthesis', 'Suno AI, ChatGPT workflow, Murf competitive')" title="ElevenLabs"></div>
+            <div class="node node-productivity" onclick="showDetails('NotebookLM', 'PRODUCTIVITY', 'Google AI research assistant', 'ChatGPT, Perplexity, Tome workflow')" title="NotebookLM"></div>
+            <div class="node node-business" onclick="showDetails('Jasper', 'BUSINESS', 'AI content writing platform', 'Copy.ai competitive, Canva AI workflow')" title="Jasper"></div>
+            <div class="node node-coding" onclick="showDetails('GitHub Copilot', 'CODING', 'AI coding assistant', 'Cursor, V0, Tabnine competitive')" title="GitHub Copilot"></div>
+        </div>
+
+        <div id="details" class="details">
+            <h3 id="toolName"></h3>
+            <p><strong>Category:</strong> <span id="toolCategory"></span></p>
+            <p><strong>Description:</strong> <span id="toolDescription"></span></p>
+            <p><strong>Connections:</strong> <span id="toolConnections"></span></p>
+            <button onclick="hideDetails()" style="background: #4f46e5; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Close</button>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <h3>Test Results:</h3>
+            <p>✅ If you can see colored nodes above, the basic system works</p>
+            <p>✅ If clicking shows details, interaction works</p>
+            <p>✅ If this loads, we can proceed to full 3D version</p>
+            <p style="color: #4f46e5;"><strong>Next: Try standalone_200.html for full 3D experience</strong></p>
+        </div>
+    </div>
+
+    <div class="legend">
+        <h4 style="margin: 0 0 10px 0;">Categories:</h4>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #4F46E5;"></div>
+            <span>NLP</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #059669;"></div>
+            <span>Coding</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #DC2626;"></div>
+            <span>Computer Vision</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #EA580C;"></div>
+            <span>Audio</span>
+        </div>
+    </div>
+
+    <script>
+        function showDetails(name, category, description, connections) {
+            document.getElementById('toolName').textContent = name;
+            document.getElementById('toolCategory').textContent = category;
+            document.getElementById('toolDescription').textContent = description;
+            document.getElementById('toolConnections').textContent = connections;
+            document.getElementById('details').style.display = 'block';
+        }
+
+        function hideDetails() {
+            document.getElementById('details').style.display = 'none';
+        }
+
+        console.log('AI Universe test page loaded successfully!');
+        console.log('If you can see this message, JavaScript is working.');
+    </script>
+</body>
+</html>
