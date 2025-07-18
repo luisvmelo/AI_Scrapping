@@ -104,30 +104,45 @@ class TopAIToolsScraper(BaseScraper):
         return tools
     
     def _scrape_main_page(self) -> List[AITool]:
-        """Scrape da página principal"""
+        """Scrape da página principal priorizando populares"""
         tools = []
         
-        try:
-            print(f"🔍 Fazendo scraping da página principal: {self.base_url}")
-            
-            response = self.get_page(self.base_url)
-            if not response:
-                print(f"❌ Erro ao acessar página principal")
-                return tools
-            
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Busca por diferentes padrões de links de ferramentas
-            tool_links = self._find_tool_links(soup)
-            
-            if tool_links:
-                print(f"📊 Encontrados {len(tool_links)} links na página principal")
-                tools = self._process_tool_links(tool_links, "main")
-            else:
-                print("⚠️ Nenhum link de ferramenta encontrado na página principal")
-            
-        except Exception as e:
-            print(f"❌ Erro no scraping da página principal: {e}")
+        # URLs priorizando páginas populares/famosas primeiro
+        priority_urls = [
+            f"{self.base_url}/popular",           # Mais populares
+            f"{self.base_url}/trending",          # Tendências
+            f"{self.base_url}/featured",          # Destacados  
+            f"{self.base_url}/top",               # Top rated
+            f"{self.base_url}/best",              # Melhores
+            f"{self.base_url}/most-downloaded",   # Mais baixados
+            f"{self.base_url}",                   # Página principal
+            f"{self.base_url}/tools",             # Ferramentas
+            f"{self.base_url}/directory"          # Diretório
+        ]
+        
+        for url in priority_urls:
+            try:
+                print(f"🔍 Fazendo scraping de: {url}")
+                
+                response = self.get_page(url)
+                if not response or response.status_code != 200:
+                    print(f"❌ Erro ao acessar {url}")
+                    continue
+                
+                soup = BeautifulSoup(response.text, 'html.parser')
+                
+                # Busca por diferentes padrões de links de ferramentas
+                tool_links = self._find_tool_links(soup)
+                
+                if tool_links:
+                    print(f"📊 Encontrados {len(tool_links)} links na página principal")
+                    tools = self._process_tool_links(tool_links, "main")
+                    break  # Exit on success
+                else:
+                    print("⚠️ Nenhum link de ferramenta encontrado na página principal")
+                
+            except Exception as e:
+                print(f"❌ Erro no scraping da página principal: {e}")
         
         return tools
     

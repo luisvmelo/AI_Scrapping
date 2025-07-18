@@ -296,6 +296,24 @@ class SQLiteAdapter(DatabaseAdapter):
             print(f"❌ SQLite statistics failed: {e}")
             return {'error': str(e)}
     
+    def upsert_ai_tool(self, tool) -> bool:
+        """Upsert (insert or update) a tool with automatic deduplication"""
+        import hashlib
+        
+        # Generate content hash
+        content_data = f"{tool.name}{tool.description}{tool.price}{tool.popularity}"
+        content_hash = hashlib.md5(content_data.encode()).hexdigest()
+        
+        # Check for existing tool
+        existing_tool = self.find_duplicate_tool(tool)
+        
+        if existing_tool:
+            # Update existing tool
+            return self.update_tool(existing_tool['id'], tool, content_hash)
+        else:
+            # Insert new tool
+            return self.insert_tool(tool, content_hash)
+    
     def validate_no_duplicates(self) -> Dict[str, Any]:
         """Validate no duplicates exist"""
         try:

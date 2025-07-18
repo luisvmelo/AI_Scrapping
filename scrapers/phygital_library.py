@@ -55,14 +55,20 @@ class PhygitalLibraryScraper(BaseScraper):
             
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # Estratégia 1: Tentar múltiplas URLs possíveis para listar ferramentas
+            # Estratégia 1: Tentar URLs priorizando páginas populares/famosas primeiro
             possible_urls = [
-                f"{self.base_url}/tools",
-                f"{self.base_url}/ai-tools", 
-                f"{self.base_url}/library",
-                f"{self.base_url}/browse",
-                f"{self.base_url}/catalog",
-                f"{self.base_url}/all-tools"
+                f"{self.base_url}/popular",           # Mais populares
+                f"{self.base_url}/trending",          # Tendências
+                f"{self.base_url}/featured",          # Destacados
+                f"{self.base_url}/top",               # Top rated
+                f"{self.base_url}/best",              # Melhores
+                f"{self.base_url}/most-downloaded",   # Mais baixados
+                f"{self.base_url}/tools",             # Ferramentas
+                f"{self.base_url}/ai-tools",          # AI Tools
+                f"{self.base_url}/library",           # Biblioteca
+                f"{self.base_url}/browse",            # Navegar
+                f"{self.base_url}/catalog",           # Catálogo
+                f"{self.base_url}/all-tools"          # Todas as ferramentas
             ]
             
             for url in possible_urls:

@@ -309,14 +309,17 @@ class TheresAnAIForThatScraperAdvanced(BaseScraper):
         """Tenta URLs alternativas do site"""
         tools = []
         
-        # URLs alternativas conhecidas
+        # URLs alternativas priorizando páginas populares/famosas primeiro
         alt_urls = [
-            f"{self.base_url}/directory",
-            f"{self.base_url}/browse", 
-            f"{self.base_url}/all-tools",
-            f"{self.base_url}/popular",
-            f"{self.base_url}/new",
-            f"{self.base_url}/featured"
+            f"{self.base_url}/popular",           # PRIMEIRO: Mais populares
+            f"{self.base_url}/featured",          # SEGUNDO: Destacados
+            f"{self.base_url}/trending",          # TERCEIRO: Tendências
+            f"{self.base_url}/top",               # QUARTO: Top rated
+            f"{self.base_url}/best",              # QUINTO: Melhores
+            f"{self.base_url}/directory",         # Diretório geral
+            f"{self.base_url}/browse",            # Navegação
+            f"{self.base_url}/all-tools",         # Todas as ferramentas
+            f"{self.base_url}/new"                # ÚLTIMO: Mais recentes
         ]
         
         for url in alt_urls:

@@ -154,22 +154,44 @@ class AIToolsDirectoryScraperJS(BaseScraper):
         return tools
     
     def _scrape_without_javascript(self) -> List[AITool]:
-        """Scrape sem JavaScript como fallback"""
+        """Scrape sem JavaScript como fallback, priorizando páginas populares"""
         tools = []
         
-        try:
-            # Tenta scraping normal primeiro
-            response = self.get_page(self.base_url)
-            if response:
-                soup = BeautifulSoup(response.text, 'html.parser')
-                tools = self._extract_tools_from_soup(soup)
-            
-            # Se não conseguiu, tenta URLs individuais do sitemap
-            if not tools:
-                tools = self._scrape_individual_tools()
-                
-        except Exception as e:
-            print(f"❌ Erro no scraping sem JavaScript: {e}")
+        # URLs priorizando páginas populares/famosas primeiro
+        priority_urls = [
+            f"{self.base_url}/popular",           # Mais populares
+            f"{self.base_url}/trending",          # Tendências  
+            f"{self.base_url}/featured",          # Destacados
+            f"{self.base_url}/top",               # Top rated
+            f"{self.base_url}/best",              # Melhores
+            f"{self.base_url}/most-used",         # Mais usados
+            f"{self.base_url}/directory",         # Diretório
+            f"{self.base_url}",                   # Página principal
+            f"{self.base_url}/tools",             # Ferramentas
+            f"{self.base_url}/ai-tools"           # AI Tools
+        ]
+        
+        for url in priority_urls:
+            try:
+                print(f"🔍 Tentando URL prioritária: {url}")
+                response = self.get_page(url)
+                if response and response.status_code == 200:
+                    soup = BeautifulSoup(response.text, 'html.parser')
+                    url_tools = self._extract_tools_from_soup(soup)
+                    if url_tools:
+                        tools.extend(url_tools)
+                        print(f"✅ {url}: {len(url_tools)} ferramentas encontradas")
+                        break  # Para no primeiro que encontrar ferramentas
+                else:
+                    print(f"❌ {url}: Não acessível")
+            except Exception as e:
+                print(f"❌ Erro em {url}: {e}")
+                continue
+        
+        # Se ainda não conseguiu, tenta URLs individuais do sitemap
+        if not tools:
+            print("🗺️ Tentando sitemap como último recurso...")
+            tools = self._scrape_individual_tools()
         
         return tools
     

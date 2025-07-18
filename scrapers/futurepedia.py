@@ -17,92 +17,110 @@ class FuturepediaScraper(BaseScraper):
     def __init__(self):
         super().__init__("futurepedia", "https://www.futurepedia.io")
     
-    def scrape(self) -> List[AITool]:
+    def scrape(self, max_tools=50) -> List[AITool]:
         """Scrape das ferramentas de AI"""
         tools = []
         
-        # Tenta primeiro a página de ferramentas
-        tools_page = self._scrape_tools_page()
-        if tools_page:
-            tools.extend(tools_page)
+        # Skip main page scraping and go directly to categories for efficiency
+        # Main page doesn't have individual tool links
         
-        # Tenta buscar em categorias específicas
-        category_tools = self._scrape_categories()
+        # Tenta buscar em categorias específicas (limitado)
+        category_tools = self._scrape_categories(max_tools=max_tools)
         tools.extend(category_tools)
         
-        return tools
+        return tools[:max_tools]
     
     def _scrape_tools_page(self) -> List[AITool]:
-        """Scrape da página principal de ferramentas"""
+        """Scrape da página principal de ferramentas, priorizando populares"""
         tools = []
         
-        try:
-            tools_url = f"{self.base_url}/ai-tools"
-            print(f"🔍 Fazendo scraping da página de ferramentas: {tools_url}")
-            
-            response = self.get_page(tools_url)
-            if not response:
-                print(f"❌ Erro ao acessar página de ferramentas")
-                return tools
-            
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            # Busca por links de ferramentas (padrão: /tool/{slug})
-            tool_links = soup.select('a[href*="/tool/"]')
-            
-            print(f"📊 Encontrados {len(tool_links)} links de ferramentas na página principal")
-            
-            # Processa TODOS os links únicos para evitar duplicatas
-            seen_tools = set()
-            for i, link in enumerate(tool_links):  # SEM LIMITE - processa todos
-                try:
-                    href = link.get('href', '')
-                    if href in seen_tools:
-                        continue
-                    seen_tools.add(href)
-                    
-                    tool = self._parse_tool_card(link, i)
-                    if tool and tool.name != "Unknown Tool" and len(tool.name) > 2:
-                        tools.append(tool)
-                except Exception as e:
-                    print(f"❌ Erro ao processar link {i}: {e}")
+        # URLs priorizando páginas populares/famosas primeiro
+        priority_urls = [
+            f"{self.base_url}/ai-tools?sort=popular",     # Mais populares
+            f"{self.base_url}/ai-tools?sort=trending",    # Tendências
+            f"{self.base_url}/ai-tools?sort=featured",    # Destacados
+            f"{self.base_url}/ai-tools?sort=top",         # Top rated
+            f"{self.base_url}/ai-tools",                  # Página geral
+            f"{self.base_url}/popular",                   # Página popular direta
+            f"{self.base_url}/trending",                  # Página trending direta
+            f"{self.base_url}/featured"                   # Página featured direta
+        ]
+        
+        for tools_url in priority_urls:
+            try:
+                print(f"🔍 Fazendo scraping da página de ferramentas: {tools_url}")
+                
+                response = self.get_page(tools_url)
+                if not response:
+                    print(f"❌ Erro ao acessar {tools_url}")
                     continue
-            
-            print(f"✅ Página principal: Scraped {len(tools)} ferramentas")
-            
-        except Exception as e:
-            print(f"❌ Erro geral no scraping da página principal: {e}")
+                
+                soup = BeautifulSoup(response.text, 'html.parser')
+                
+                # Busca por links de ferramentas (vários padrões)
+                tool_links = soup.select('a[href*="/tool/"]')
+                
+                print(f"📊 Encontrados {len(tool_links)} links de ferramentas na página principal")
+                
+                # Processa links únicos para evitar duplicatas (com limite)
+                seen_tools = set()
+                for i, link in enumerate(tool_links[:50]):  # Limite de 50 links por página
+                    try:
+                        href = link.get('href', '')
+                        if href in seen_tools:
+                            continue
+                        seen_tools.add(href)
+                        
+                        tool = self._parse_tool_card(link, i)
+                        if tool and tool.name != "Unknown Tool" and len(tool.name) > 2:
+                            tools.append(tool)
+                    except Exception as e:
+                        print(f"❌ Erro ao processar link {i}: {e}")
+                        continue
+                
+                print(f"✅ Página principal: Scraped {len(tools)} ferramentas")
+                
+            except Exception as e:
+                print(f"❌ Erro geral no scraping da página principal: {e}")
         
         return tools
     
-    def _scrape_categories(self) -> List[AITool]:
-        """Scrape de páginas de categorias específicas com paginação"""
+    def _scrape_categories(self, max_tools=50) -> List[AITool]:
+        """Scrape de páginas de categorias específicas com rotação eficiente"""
         tools = []
         
-        # Todas as 10 categorias do Futurepedia - SCRAPE TODAS AS PÁGINAS (sem limites)
+        # Estratégia: Diversificar entre categorias ao invés de esgotar uma categoria
+        # Apenas categorias válidas (404 removidas)
         categories = [
-            ("business", 1517),      # AI Business Tools - ~30 páginas
-            ("productivity", 605),   # AI Productivity Tools - ~12 páginas
-            ("misc", 590),           # Misc AI Tools - ~12 páginas
-            ("automation", 451),     # Automation Tools - ~9 páginas
-            ("text", 302),           # AI Text Generators - ~6 páginas
-            ("image", 298),          # AI Image Tools - ~6 páginas
-            ("code", 187),           # AI Code Tools - ~4 páginas
-            ("video", 169),          # AI Video Tools - ~3 páginas
-            ("audio", 142),          # AI Audio Generators - ~3 páginas
-            ("art", 117)             # AI Art Generators - ~2 páginas
+            ("business", 1517),      # AI Business Tools
+            ("productivity", 605),   # AI Productivity Tools  
+            ("image", 298),          # AI Image Tools
+            ("code", 187),           # AI Code Tools
+            ("video", 169),          # AI Video Tools
+            ("art", 117)             # AI Art Generators
         ]
         
         global_seen_tools = set()  # Evita duplicatas entre categorias
         
+        # Nova estratégia: Rotação entre categorias
+        # Ao invés de esgotar uma categoria, pega algumas ferramentas de cada
+        tools_per_category = max(1, max_tools // len(categories))  # Distribui igualmente
+        max_pages_per_category = 10  # Máximo 10 páginas por categoria
+        
         for category, total_tools in categories:
+            # Stop if we have enough tools
+            if len(tools) >= max_tools:
+                break
+                
             try:
-                print(f"🔍 Scraping categoria: {category} ({total_tools} ferramentas, TODAS as páginas)")
+                remaining_needed = max_tools - len(tools)
+                target_for_category = min(tools_per_category, remaining_needed)
+                print(f"🔍 Scraping categoria: {category} (target: {target_for_category} tools)")
                 category_tools = []
                 
-                # Scrape TODAS as páginas da categoria (sem limite)
+                # Scrape páginas da categoria (com limite rígido)
                 page = 1
-                while True:
+                while page <= max_pages_per_category and len(category_tools) < target_for_category:
                     try:
                         # URL com paginação
                         if page == 1:
@@ -119,7 +137,7 @@ class FuturepediaScraper(BaseScraper):
                         
                         soup = BeautifulSoup(response.text, 'html.parser')
                         
-                        # Busca por links de ferramentas (padrão: /tool/{slug})
+                        # Busca por links de ferramentas (vários padrões)
                         tool_links = soup.select('a[href*="/tool/"]')
                         
                         if not tool_links:
@@ -131,6 +149,10 @@ class FuturepediaScraper(BaseScraper):
                         page_tools = []
                         for i, link in enumerate(tool_links):
                             try:
+                                # Stop if we have enough tools for this category
+                                if len(category_tools) + len(page_tools) >= target_for_category:
+                                    break
+                                    
                                 href = link.get('href', '')
                                 if href in global_seen_tools:
                                     continue
@@ -145,6 +167,11 @@ class FuturepediaScraper(BaseScraper):
                         category_tools.extend(page_tools)
                         print(f"   ✅ Página {page}: {len(page_tools)} ferramentas extraídas")
                         
+                        # Check if we have enough tools for this category
+                        if len(category_tools) >= target_for_category:
+                            print(f"   🎯 Reached category target of {target_for_category} tools")
+                            break
+                        
                         # Incrementa página e pausa entre páginas
                         page += 1
                         time.sleep(2)
@@ -152,8 +179,8 @@ class FuturepediaScraper(BaseScraper):
                     except Exception as e:
                         print(f"   ❌ Erro na página {page} da categoria {category}: {e}")
                         page += 1  # Incrementa mesmo em caso de erro
-                        if page > 50:  # Limite de segurança para evitar loop infinito
-                            print(f"   🛑 Limite de segurança atingido (50 páginas) para categoria {category}")
+                        if page > max_pages_per_category:  # Limite de segurança para evitar loop infinito
+                            print(f"   🛑 Limite de segurança atingido ({max_pages_per_category} páginas) para categoria {category}")
                             break
                         continue
                 

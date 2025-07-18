@@ -1,0 +1,214 @@
+2025-07-17 23:55:45,709 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-17 23:55:45,710 - INFO - Target: 5 tools
+2025-07-17 23:55:45,711 - ERROR - Error getting count: 'SQLiteAdapter' object has no attribute 'execute_query'
+2025-07-17 23:55:45,711 - INFO - Current database: 0 tools
+2025-07-17 23:55:45,712 - INFO - Need 5 more tools
+2025-07-17 23:55:45,712 - INFO - Will try to get ~50 tools per site
+2025-07-17 23:55:45,712 - ERROR - Error getting count: 'SQLiteAdapter' object has no attribute 'execute_query'
+2025-07-17 23:55:45,713 - INFO - Current total: 0 tools
+2025-07-17 23:55:45,713 - INFO - Need 5 more
+2025-07-17 23:55:45,713 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-17 23:55:45,714 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-17 23:57:45,581 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-17 23:57:45,582 - INFO - Target: 5 tools
+2025-07-17 23:57:45,598 - INFO - Current database: 90 tools
+2025-07-17 23:57:45,599 - INFO - ✅ Target already reached!
+2025-07-17 23:57:55,220 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-17 23:57:55,221 - INFO - Target: 100 tools
+2025-07-17 23:57:55,231 - INFO - Current database: 91 tools
+2025-07-17 23:57:55,232 - INFO - Need 9 more tools
+2025-07-17 23:57:55,232 - INFO - Will try to get ~50 tools per site
+2025-07-17 23:57:55,243 - INFO - Current total: 91 tools
+2025-07-17 23:57:55,244 - INFO - Need 9 more
+2025-07-17 23:57:55,244 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-17 23:57:55,244 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-18 00:04:29,347 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-18 00:04:29,347 - INFO - Target: 1000 tools
+2025-07-18 00:04:29,359 - INFO - Current database: 92 tools
+2025-07-18 00:04:29,359 - INFO - Need 908 more tools
+2025-07-18 00:04:29,359 - INFO - Will try to get ~151 tools per site
+2025-07-18 00:04:29,370 - INFO - Current total: 92 tools
+2025-07-18 00:04:29,371 - INFO - Need 908 more
+2025-07-18 00:04:29,371 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-18 00:04:29,371 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-18 11:48:29,758 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-18 11:48:29,759 - INFO - Target: 95 tools
+2025-07-18 11:48:29,775 - INFO - Current database: 94 tools
+2025-07-18 11:48:29,775 - INFO - Need 1 more tools
+2025-07-18 11:48:29,775 - INFO - Will try to get ~50 tools per site
+2025-07-18 11:48:29,790 - INFO - Current total: 94 tools
+2025-07-18 11:48:29,790 - INFO - Need 1 more
+2025-07-18 11:48:29,790 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-18 11:48:29,791 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-18 11:59:50,334 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-18 11:59:50,336 - INFO - Target: 100 tools
+2025-07-18 11:59:50,352 - INFO - Current database: 95 tools
+2025-07-18 11:59:50,353 - INFO - Need 5 more tools
+2025-07-18 11:59:50,353 - INFO - Will try to get ~50 tools per site
+2025-07-18 11:59:50,368 - INFO - Current total: 95 tools
+2025-07-18 11:59:50,369 - INFO - Need 5 more
+2025-07-18 11:59:50,369 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-18 11:59:50,369 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-18 12:00:00,929 - INFO - Found 0 tools from futurepedia
+2025-07-18 12:00:00,930 - INFO - ✅ Completed futurepedia: 0 tools added
+2025-07-18 12:00:00,931 - INFO - Site futurepedia: +0 tools
+2025-07-18 12:00:00,931 - INFO - Waiting 52.6s (between_sites)...
+2025-07-18 12:00:53,549 - INFO - Current total: 95 tools
+2025-07-18 12:00:53,550 - INFO - Need 5 more
+2025-07-18 12:00:53,550 - INFO - 🚀 Starting scraper: theresanaiforthat
+2025-07-18 12:00:53,550 - WARNING - Scraper theresanaiforthat doesn't have batch method, trying manual pagination
+2025-07-18 12:02:04,186 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-18 12:02:04,187 - INFO - Target: 100 tools
+2025-07-18 12:02:04,200 - INFO - Current database: 96 tools
+2025-07-18 12:02:04,200 - INFO - Need 4 more tools
+2025-07-18 12:02:04,201 - INFO - Will try to get ~50 tools per site
+2025-07-18 12:02:04,212 - INFO - Current total: 96 tools
+2025-07-18 12:02:04,212 - INFO - Need 4 more
+2025-07-18 12:02:04,213 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-18 12:02:04,213 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-18 12:02:14,887 - INFO - Found 0 tools from futurepedia
+2025-07-18 12:02:14,888 - INFO - ✅ Completed futurepedia: 0 tools added
+2025-07-18 12:02:14,888 - INFO - Site futurepedia: +0 tools
+2025-07-18 12:02:14,889 - INFO - Waiting 48.2s (between_sites)...
+2025-07-18 12:03:03,105 - INFO - Current total: 96 tools
+2025-07-18 12:03:03,106 - INFO - Need 4 more
+2025-07-18 12:03:03,106 - INFO - 🚀 Starting scraper: theresanaiforthat
+2025-07-18 12:03:03,106 - WARNING - Scraper theresanaiforthat doesn't have batch method, trying manual pagination
+2025-07-18 12:03:03,107 - ERROR - Error on page 1 of theresanaiforthat: TheresAnAIForThatScraperAdvanced.scrape() got an unexpected keyword argument 'max_tools'
+2025-07-18 12:03:03,108 - INFO - Found 0 tools from theresanaiforthat
+2025-07-18 12:03:03,108 - INFO - ✅ Completed theresanaiforthat: 0 tools added
+2025-07-18 12:03:03,109 - INFO - Site theresanaiforthat: +0 tools
+2025-07-18 12:03:03,109 - INFO - Waiting 51.9s (between_sites)...
+2025-07-18 12:03:55,034 - INFO - Current total: 96 tools
+2025-07-18 12:03:55,034 - INFO - Need 4 more
+2025-07-18 12:03:55,035 - INFO - 🚀 Starting scraper: aitools_directory
+2025-07-18 12:03:55,035 - WARNING - Scraper aitools_directory doesn't have batch method, trying manual pagination
+2025-07-18 12:03:55,035 - ERROR - Error on page 1 of aitools_directory: AIToolsDirectoryScraperJS.scrape() got an unexpected keyword argument 'max_tools'
+2025-07-18 12:03:55,036 - INFO - Found 0 tools from aitools_directory
+2025-07-18 12:03:55,036 - INFO - ✅ Completed aitools_directory: 0 tools added
+2025-07-18 12:03:55,037 - INFO - Site aitools_directory: +0 tools
+2025-07-18 12:03:55,037 - INFO - Waiting 44.8s (between_sites)...
+2025-07-18 12:04:16,441 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-18 12:04:16,441 - INFO - Target: 100 tools
+2025-07-18 12:04:16,451 - INFO - Current database: 97 tools
+2025-07-18 12:04:16,451 - INFO - Need 3 more tools
+2025-07-18 12:04:16,451 - INFO - Will try to get ~50 tools per site
+2025-07-18 12:04:16,461 - INFO - Current total: 97 tools
+2025-07-18 12:04:16,461 - INFO - Need 3 more
+2025-07-18 12:04:16,462 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-18 12:04:16,462 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-18 12:04:25,929 - INFO - Found 0 tools from futurepedia
+2025-07-18 12:04:25,929 - INFO - ✅ Completed futurepedia: 0 tools added
+2025-07-18 12:04:25,930 - INFO - Site futurepedia: +0 tools
+2025-07-18 12:04:25,931 - INFO - Waiting 47.9s (between_sites)...
+2025-07-18 12:05:13,830 - INFO - Current total: 97 tools
+2025-07-18 12:05:13,830 - INFO - Need 3 more
+2025-07-18 12:05:13,830 - INFO - 🚀 Starting scraper: theresanaiforthat
+2025-07-18 12:05:13,831 - WARNING - Scraper theresanaiforthat doesn't have batch method, trying manual pagination
+2025-07-18 12:07:02,638 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-18 12:07:02,639 - INFO - Target: 110 tools
+2025-07-18 12:07:02,655 - INFO - Current database: 102 tools
+2025-07-18 12:07:02,655 - INFO - Need 8 more tools
+2025-07-18 12:07:02,655 - INFO - Will try to get ~50 tools per site
+2025-07-18 12:07:02,670 - INFO - Current total: 102 tools
+2025-07-18 12:07:02,671 - INFO - Need 8 more
+2025-07-18 12:07:02,671 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-18 12:07:02,671 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-18 12:07:11,829 - INFO - Found 0 tools from futurepedia
+2025-07-18 12:07:11,830 - INFO - ✅ Completed futurepedia: 0 tools added
+2025-07-18 12:07:11,830 - INFO - Site futurepedia: +0 tools
+2025-07-18 12:07:11,830 - INFO - Waiting 38.0s (between_sites)...
+2025-07-18 12:07:49,860 - INFO - Current total: 102 tools
+2025-07-18 12:07:49,860 - INFO - Need 8 more
+2025-07-18 12:07:49,860 - INFO - 🚀 Starting scraper: theresanaiforthat
+2025-07-18 12:07:49,861 - WARNING - Scraper theresanaiforthat doesn't have batch method, trying manual pagination
+2025-07-18 12:22:49,508 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-18 12:22:49,509 - INFO - Target: 120 tools
+2025-07-18 12:22:49,520 - INFO - Current database: 103 tools
+2025-07-18 12:22:49,521 - INFO - Need 17 more tools
+2025-07-18 12:22:49,521 - INFO - Will try to get ~50 tools per site
+2025-07-18 12:22:49,531 - INFO - Current total: 103 tools
+2025-07-18 12:22:49,532 - INFO - Need 17 more
+2025-07-18 12:22:49,532 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-18 12:22:49,532 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-18 12:23:31,035 - INFO - Found 0 tools from futurepedia
+2025-07-18 12:23:31,035 - INFO - ✅ Completed futurepedia: 0 tools added
+2025-07-18 12:23:31,036 - INFO - Site futurepedia: +0 tools
+2025-07-18 12:23:31,038 - INFO - Waiting 38.7s (between_sites)...
+2025-07-18 12:24:09,806 - INFO - Current total: 103 tools
+2025-07-18 12:24:09,806 - INFO - Need 17 more
+2025-07-18 12:24:09,807 - INFO - 🚀 Starting scraper: theresanaiforthat
+2025-07-18 12:24:09,807 - WARNING - Scraper theresanaiforthat doesn't have batch method, trying manual pagination
+2025-07-18 12:31:11,939 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-18 12:31:11,939 - INFO - Target: 1000 tools
+2025-07-18 12:31:11,949 - INFO - Current database: 104 tools
+2025-07-18 12:31:11,950 - INFO - Need 896 more tools
+2025-07-18 12:31:11,950 - INFO - Will try to get ~149 tools per site
+2025-07-18 12:31:11,962 - INFO - Current total: 104 tools
+2025-07-18 12:31:11,963 - INFO - Need 896 more
+2025-07-18 12:31:11,963 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-18 12:31:11,963 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-18 12:31:56,378 - INFO - Found 0 tools from futurepedia
+2025-07-18 12:31:56,379 - INFO - ✅ Completed futurepedia: 0 tools added
+2025-07-18 12:31:56,380 - INFO - Site futurepedia: +0 tools
+2025-07-18 12:31:56,380 - INFO - Waiting 45.8s (between_sites)...
+2025-07-18 12:32:42,163 - INFO - Current total: 104 tools
+2025-07-18 12:32:42,163 - INFO - Need 896 more
+2025-07-18 12:32:42,163 - INFO - 🚀 Starting scraper: theresanaiforthat
+2025-07-18 12:32:42,164 - WARNING - Scraper theresanaiforthat doesn't have batch method, trying manual pagination
+2025-07-18 12:38:29,891 - INFO - 🤖 STARTING AUTONOMOUS AI TOOLS SCRAPING
+2025-07-18 12:38:29,891 - INFO - Target: 1000 tools
+2025-07-18 12:38:29,904 - INFO - Current database: 105 tools
+2025-07-18 12:38:29,905 - INFO - Need 895 more tools
+2025-07-18 12:38:29,905 - INFO - Will try to get ~149 tools per site
+2025-07-18 12:38:29,918 - INFO - Current total: 105 tools
+2025-07-18 12:38:29,918 - INFO - Need 895 more
+2025-07-18 12:38:29,919 - INFO - 🚀 Starting scraper: futurepedia
+2025-07-18 12:38:29,919 - WARNING - Scraper futurepedia doesn't have batch method, trying manual pagination
+2025-07-18 12:39:09,185 - INFO - Found 0 tools from futurepedia
+2025-07-18 12:39:09,186 - INFO - ✅ Completed futurepedia: 0 tools added
+2025-07-18 12:39:09,188 - INFO - Site futurepedia: +0 tools
+2025-07-18 12:39:09,189 - INFO - Waiting 32.7s (between_sites)...
+2025-07-18 12:39:41,962 - INFO - Current total: 105 tools
+2025-07-18 12:39:41,963 - INFO - Need 895 more
+2025-07-18 12:39:41,963 - INFO - 🚀 Starting scraper: aitools_directory
+2025-07-18 12:39:41,964 - WARNING - Scraper aitools_directory doesn't have batch method, trying manual pagination
+2025-07-18 12:39:43,935 - INFO - ====== WebDriver manager ======
+2025-07-18 12:39:44,095 - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-18 12:39:44,559 - INFO - About to download new driver from https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip
+2025-07-18 12:39:44,999 - INFO - Driver downloading response is 200
+2025-07-18 12:39:46,002 - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-18 12:39:46,495 - INFO - Get LATEST chromedriver version for google-chrome
+2025-07-18 12:39:46,895 - INFO - Driver has been saved in cache [/home/luisevmelo/.wdm/drivers/chromedriver/linux64/114.0.5735.90]
+2025-07-18 12:40:30,430 - INFO - Found 0 tools from aitools_directory
+2025-07-18 12:40:30,431 - INFO - ✅ Completed aitools_directory: 0 tools added
+2025-07-18 12:40:30,432 - INFO - Site aitools_directory: +0 tools
+2025-07-18 12:40:30,432 - INFO - Waiting 45.8s (between_sites)...
+2025-07-18 12:41:16,209 - INFO - Current total: 105 tools
+2025-07-18 12:41:16,209 - INFO - Need 895 more
+2025-07-18 12:41:16,210 - INFO - 🚀 Starting scraper: toolify
+2025-07-18 12:41:16,210 - WARNING - Scraper toolify doesn't have batch method, trying manual pagination
+2025-07-18 12:53:03,002 - INFO - Found 0 tools from toolify
+2025-07-18 12:53:03,002 - INFO - ✅ Completed toolify: 0 tools added
+2025-07-18 12:53:03,003 - INFO - Site toolify: +0 tools
+2025-07-18 12:53:03,004 - INFO - Waiting 31.8s (between_sites)...
+2025-07-18 12:53:34,785 - INFO - Current total: 105 tools
+2025-07-18 12:53:34,786 - INFO - Need 895 more
+2025-07-18 12:53:34,786 - INFO - 🚀 Starting scraper: topai_tools
+2025-07-18 12:53:34,787 - WARNING - Scraper topai_tools doesn't have batch method, trying manual pagination
+2025-07-18 13:22:00,355 - INFO - Found 0 tools from topai_tools
+2025-07-18 13:22:00,357 - INFO - ✅ Completed topai_tools: 0 tools added
+2025-07-18 13:22:00,357 - INFO - Site topai_tools: +0 tools
+2025-07-18 13:22:00,357 - INFO - Waiting 48.4s (between_sites)...
+2025-07-18 13:22:48,810 - INFO - Current total: 105 tools
+2025-07-18 13:22:48,811 - INFO - Need 895 more
+2025-07-18 13:22:48,811 - INFO - 🚀 Starting scraper: phygital_library
+2025-07-18 13:22:48,811 - WARNING - Scraper phygital_library doesn't have batch method, trying manual pagination
+2025-07-18 13:25:39,059 - INFO - Found 0 tools from phygital_library
+2025-07-18 13:25:39,060 - INFO - ✅ Completed phygital_library: 0 tools added
+2025-07-18 13:25:39,060 - INFO - Site phygital_library: +0 tools
+2025-07-18 13:25:39,061 - INFO - Waiting 40.1s (between_sites)...
+2025-07-18 13:26:19,225 - INFO - Current total: 105 tools
+2025-07-18 13:26:19,225 - INFO - Need 895 more
+2025-07-18 13:26:19,226 - INFO - 🚀 Starting scraper: theresanaiforthat
+2025-07-18 13:26:19,226 - WARNING - Scraper theresanaiforthat doesn't have batch method, trying manual pagination
